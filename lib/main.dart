@@ -1,31 +1,35 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:model_viewer_plus/model_viewer_plus.dart';
+import 'package:flutter_3d_controller/flutter_3d_controller.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  MyAppState createState() => MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
-  String selectedModel =
-      'https://models.readyplayer.me/65a8dba831b23abb4f401bae.glb';
+class MyAppState extends State<MyApp> {
+  Flutter3DController controller = Flutter3DController();
+  List<String> animations = [];
+  String? activeAnimation;
 
-  void switchModel(String modelUrl) {
+  // This will fetch all the available animations of your model
+  Future<void> _fetchAnimations() async {
+    final availableAnimations = await controller.getAvailableAnimations();
     setState(() {
-      selectedModel = modelUrl;
+      animations = availableAnimations;
     });
   }
 
-  final backgroundColors = [Colors.black, const Color(0xFFEEEEEE)];
-  final _random = Random();
+  setActiveAnimation(String animation) {
+    setState(() {
+      activeAnimation = animation;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,43 +42,53 @@ class _MyAppState extends State<MyApp> {
       home: Scaffold(
         appBar: AppBar(
           title: const Text(
-            'MViewer',
+            '3D Model Controller',
             style: TextStyle(fontWeight: FontWeight.w600),
           ),
         ),
-        body: Column(
-          children: [
-            Expanded(
-              child: ModelViewer(
-                key: UniqueKey(),
-                backgroundColor:
-                    backgroundColors[_random.nextInt(backgroundColors.length)],
-                src: selectedModel,
-                alt: 'A 3D Model',
-                ar: true,
-                autoRotate: true,
-                disableZoom: true,
-              ),
-            ),
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  onPressed: () => switchModel(
-                      'https://models.readyplayer.me/65a8dba831b23abb4f401bae.glb'),
-                  child: const Text('Model 1'),
+        body: Flutter3DViewer(
+          activeGestureInterceptor: true,
+          progressBarColor: Colors.orange,
+          enableTouch: true,
+          onProgress: (double progressValue) {},
+          onLoad: (String modelAddress) => _fetchAnimations(),
+          onError: (String error) {},
+          controller: controller,
+          // Set your animation in src. URL or from asset
+          src: 'assets/models/business_man.glb',
+        ),
+        floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.pause),
+          onPressed: () => controller.pauseAnimation(),
+        ),
+        bottomNavigationBar: SizedBox(
+          height: 100,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            padding: EdgeInsets.all(20),
+            children: animations.map((animation) {
+              bool isActive = activeAnimation == animation;
+              return GestureDetector(
+                onTap: () {
+                  controller.playAnimation(animationName: animation);
+                  setActiveAnimation(animation);
+                },
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  child: Chip(
+                    backgroundColor: isActive ? Colors.black87 : null,
+                    label: Text(
+                      animation.substring(4).toUpperCase(),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: isActive ? Colors.white : null,
+                      ),
+                    ),
+                  ),
                 ),
-                const SizedBox(width: 10),
-                ElevatedButton(
-                  onPressed: () => switchModel(
-                      'https://modelviewer.dev/shared-assets/models/Astronaut.glb'),
-                  child: const Text('Model 2'),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-          ],
+              );
+            }).toList(),
+          ),
         ),
       ),
     );
