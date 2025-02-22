@@ -55,9 +55,10 @@ We welcome contributions! Please follow these steps to contribute:
     ```
 5. Create a pull request.
 
-## Credits
+## Glb model Credits
 Ali Sani Abdulkadir
 alisani081 [github]
+
 ## License
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
