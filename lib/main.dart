@@ -3,10 +3,12 @@ import 'package:flutter_3d_controller/flutter_3d_controller.dart';
 import 'package:flutter_3d_controller/src/data/repositories/i_flutter_3d_repository.dart';
 import 'repo/3d_repo.dart';
 
+// Entry point of the application
 void main() {
   runApp(MyApp());
 }
 
+// Main application widget
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
@@ -14,10 +16,14 @@ class MyApp extends StatefulWidget {
   MyAppState createState() => MyAppState();
 }
 
+// State class for MyApp
 class MyAppState extends State<MyApp> {
+  // Controllers for the 3D models
   Flutter3DController controller = Flutter3DController();
   Flutter3DController chairController = Flutter3DController();
+  // List of available animations
   List<String> animations = [];
+  // Currently active animation
   String? activeAnimation;
 
   @override
@@ -28,7 +34,7 @@ class MyAppState extends State<MyApp> {
     chairController.init(MyFlutter3DRepository() as IFlutter3DRepository);
   }
 
-  // This will fetch all the available animations of your model
+  // Fetch all the available animations of the model
   Future<void> _fetchAnimations() async {
     try {
       final availableAnimations = await controller.getAvailableAnimations();
@@ -40,6 +46,7 @@ class MyAppState extends State<MyApp> {
     }
   }
 
+  // Set the active animation
   setActiveAnimation(String animation) {
     setState(() {
       activeAnimation = animation;
@@ -64,12 +71,13 @@ class MyAppState extends State<MyApp> {
         ),
         body: Stack(
           children: [
+            // Display the chair model
             Align(
-              alignment: Alignment.center, // Center the chair model
+              alignment: Alignment.center,
               child: Container(
-                width: 130, // Set a specific width
+                width: 130,
                 height: 400,
-                margin: EdgeInsets.only(top: 57), // Set a specific height
+                margin: EdgeInsets.only(top: 57),
                 child: Flutter3DViewer(
                   activeGestureInterceptor: true,
                   progressBarColor: Colors.blue,
@@ -86,11 +94,12 @@ class MyAppState extends State<MyApp> {
                 ),
               ),
             ),
+            // Display the business man model
             Align(
-              alignment: Alignment.center, // Center the business man model
-              child: SizedBox(
-                width: 200, // Set a specific width
-                height: 400, // Set a specific height
+              alignment: Alignment.center,
+              child: Container(
+                width: 200,
+                height: 400,
                 child: Flutter3DViewer(
                   activeGestureInterceptor: true,
                   progressBarColor: Colors.orange,
@@ -110,6 +119,7 @@ class MyAppState extends State<MyApp> {
             ),
           ],
         ),
+        // Floating action button to pause animations
         floatingActionButton: FloatingActionButton(
           child: Icon(Icons.pause),
           onPressed: () {
@@ -117,6 +127,7 @@ class MyAppState extends State<MyApp> {
             chairController.pauseAnimation();
           },
         ),
+        // Bottom navigation bar to display available animations
         bottomNavigationBar: ValueListenableBuilder<bool>(
           valueListenable: controller.onModelLoaded,
           builder: (context, isModelLoaded, child) {
@@ -124,14 +135,13 @@ class MyAppState extends State<MyApp> {
               return Center(child: CircularProgressIndicator());
             } else {
               return SizedBox(
-                height: 300, // Adjust the height as needed
+                height: 300,
                 child: GridView.builder(
                   padding: EdgeInsets.all(5),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3, // Adjust the number of columns as needed
-                    crossAxisSpacing:
-                        5, // Adjust the horizontal spacing as needed
-                    mainAxisSpacing: 2, // Adjust the vertical spacing as needed
+                    crossAxisCount: 3,
+                    crossAxisSpacing: 5,
+                    mainAxisSpacing: 2,
                   ),
                   itemCount: animations.length,
                   itemBuilder: (context, index) {
