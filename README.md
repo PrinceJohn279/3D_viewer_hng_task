@@ -14,7 +14,7 @@ To install and run the 3D Model Viewer, follow these steps:
 
 1. Clone the repository:
     ```sh
-    git clone https://github.com/yourusername/hngtask_3d_viewer.git
+    git clone https://github.com/princejohn279/hngtask_3d_viewer.git
     ```
 2. Navigate to the project directory:
     ```sh
