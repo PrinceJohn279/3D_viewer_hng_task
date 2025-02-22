@@ -88,7 +88,7 @@ class MyAppState extends State<MyApp> {
             ),
             Align(
               alignment: Alignment.center, // Center the business man model
-              child: Container(
+              child: SizedBox(
                 width: 200, // Set a specific width
                 height: 400, // Set a specific height
                 child: Flutter3DViewer(
